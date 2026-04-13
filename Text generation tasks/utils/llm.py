@@ -1,13 +1,22 @@
-from langchain_community.llms import Ollama
+from huggingface_hub import InferenceClient
+import os
 
 def load_llm():
     """
-    Load local LLM using Ollama
-    Make sure you installed Ollama and pulled a model
-    Example: ollama run llama3
+    Load Hugging Face API model (FREE)
     """
-    llm = Ollama(
-        model="llama3",   # change to mistral / phi / gemma if needed
-        temperature=0.7
+    client = InferenceClient(
+        provider="hf-inference",
+        api_key=os.getenv("HF_TOKEN")   # set env variable
     )
+
+    def llm(prompt):
+        response = client.text_generation(
+            prompt,
+            model="mistralai/Mistral-7B-Instruct-v0.1",  # free model
+            max_new_tokens=512,
+            temperature=0.7
+        )
+        return response
+
     return llm
